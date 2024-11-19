@@ -1,0 +1,128 @@
+import streamlit as st 
+st.title("oo")
+
+# Student Record System using CRUD operations, Search, and Sort
+
+class StudentRecordSystem:
+    def __init__(self):
+        # List to store student records
+        self.students = []
+
+    # CREATE: Add a new student record
+    def create_student(self, student_id, first_name, last_name, gpa, enrollment_year):
+        student = {
+            "id": student_id,
+            "first_name": first_name,
+            "last_name": last_name,
+            "gpa": gpa,
+            "enrollment_year": enrollment_year
+        }
+        self.students.append(student)
+        print(f"Student {first_name} {last_name} added successfully.")
+
+    # READ: Retrieve a student's record by ID
+    def read_student(self, student_id):
+        for student in self.students:
+            if student["id"] == student_id:
+                return student
+        return None
+
+    # UPDATE: Update an existing student record
+    def update_student(self, student_id, first_name=None, last_name=None, gpa=None, enrollment_year=None):
+        student = self.read_student(student_id)
+        if student:
+            if first_name:
+                student["first_name"] = first_name
+            if last_name:
+                student["last_name"] = last_name
+            if gpa:
+                student["gpa"] = gpa
+            if enrollment_year:
+                student["enrollment_year"] = enrollment_year
+            print(f"Student {student_id} updated successfully.")
+        else:
+            print(f"Student with ID {student_id} not found.")
+
+    # DELETE: Remove a student record by ID
+    def delete_student(self, student_id):
+        student = self.read_student(student_id)
+        if student:
+            self.students.remove(student)
+            print(f"Student {student_id} deleted successfully.")
+        else:
+            print(f"Student with ID {student_id} not found.")
+
+    # SEARCH: Search for a student by name (first or last)
+    def search_student_by_name(self, name):
+        found_students = [student for student in self.students if name.lower() in student["first_name"].lower() or name.lower() in student["last_name"].lower()]
+        if found_students:
+            return found_students
+        else:
+            print(f"No students found with name '{name}'.")
+            return []
+
+    # SORT: Sort students by GPA or last name
+    def sort_students(self, by="gpa"):
+        if by == "gpa":
+            sorted_students = sorted(self.students, key=lambda x: x["gpa"], reverse=True)
+        elif by == "name":
+            sorted_students = sorted(self.students, key=lambda x: (x["last_name"], x["first_name"]))
+        else:
+            print("Invalid sorting parameter. Sorting by GPA by default.")
+            sorted_students = sorted(self.students, key=lambda x: x["gpa"], reverse=True)
+        return sorted_students
+
+    # Display all students
+    def display_students(self):
+        if not self.students:
+            print("No students available.")
+            return
+        for student in self.students:
+            print(f"ID: {student['id']}, Name: {student['first_name']} {student['last_name']}, GPA: {student['gpa']}, Enrollment Year: {student['enrollment_year']}")
+    
+
+# Example usage
+if __name__ == "__main__":
+    # Initialize the Student Record System
+    srs = StudentRecordSystem()
+
+    # CREATE some student records
+    srs.create_student(1, "John", "Doe", 3.5, 2021)
+    srs.create_student(2, "Jane", "Smith", 3.8, 2022)
+    srs.create_student(3, "Emily", "Jones", 3.9, 2021)
+    srs.create_student(4, "Michael", "Brown", 3.2, 2020)
+
+    # READ a student record by ID
+    print("\nRead Student with ID 1:")
+    student = srs.read_student(1)
+    if student:
+        print(student)
+
+    # UPDATE a student's record
+    srs.update_student(1, gpa=3.7)
+
+    # DELETE a student record
+    srs.delete_student(4)
+
+    # SEARCH students by name
+    print("\nSearch for students with the name 'Smith':")
+    found_students = srs.search_student_by_name("Smith")
+    for student in found_students:
+        print(student)
+
+    # SORT students by GPA
+    print("\nSorted Students by GPA:")
+    sorted_students = srs.sort_students(by="gpa")
+    for student in sorted_students:
+        print(student)
+
+    # SORT students by Name
+    print("\nSorted Students by Name:")
+    sorted_students_by_name = srs.sort_students(by="name")
+    for student in sorted_students_by_name:
+        print(student)
+
+    # DISPLAY all students
+    print("\nAll Students:")
+    srs.display_students()
+
